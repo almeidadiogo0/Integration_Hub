@@ -1,0 +1,150 @@
+{
+    "schemaVersion": "1.0",
+    "adapters": [
+        {
+            "id": "cnpj-finder-v1",
+            "name": "CNPJ Finder",
+            "type": "SOURCE",
+            "description": "Public API for corporate data lookup",
+            "auth": {
+                "type": "NONE"
+            },
+            "api_url": "https://cnpjfinder.com.br/api/v1/cnpj/{cnpj}",
+            "schema": {
+                "fields": [
+                    "data.cnpj",
+                    "data.razao_social",
+                    "data.nome_fantasia",
+                    "data.situacao_cadastral",
+                    "data.data_inicio_atividade",
+                    "data.porte_empresa",
+                    "data.logradouro",
+                    "data.municipio",
+                    "data.uf",
+                    "data.cep"
+                ]
+            }
+        },
+        {
+            "id": "customer-crm-v1",
+            "name": "Customer CRM",
+            "type": "TARGET",
+            "description": "Internal CRM System",
+            "auth": {
+                "type": "BEARER",
+                "token": "env:CRM_TOKEN"
+            },
+            "api_url": "",
+            "schema": {
+                "fields": [
+                    "Id",
+                    "Trading Name",
+                    "Company Name",
+                    "Status",
+                    "Address line1",
+                    "Number",
+                    "Zip/Postal Code",
+                    "State/Province",
+                    "City",
+                    "Country"
+                ]
+            }
+        },
+        {
+            "id": "payment-webhook-v1",
+            "name": "Payment Webhook",
+            "type": "SOURCE",
+            "description": "Receives payment events from external gateway",
+            "auth": {
+                "type": "NONE"
+            },
+            "api_url": "",
+            "schema": {
+                "fields": [
+                    "event_type",
+                    "payload.transaction_id",
+                    "payload.amount",
+                    "payload.currency",
+                    "payload.customer.email",
+                    "timestamp"
+                ]
+            }
+        },
+        {
+            "id": "ibge-nomes-v2",
+            "name": "IBGE Nomes",
+            "type": "SOURCE",
+            "description": "API pública do IBGE para dados de frequência de nomes na população brasileira",
+            "auth": {
+                "type": "NONE"
+            },
+            "api_url": "https://servicodados.ibge.gov.br/api/v2/censos/nomes/{nome}",
+            "schema": {
+                "fields": [
+                    "0.nome",
+                    "0.sexo",
+                    "0.localidade",
+                    "0.res.periodo",
+                    "0.res.frequencia"
+                ]
+            }
+        },
+        {
+            "id": "nomes-central-v1",
+            "name": "Central de Nomes",
+            "type": "TARGET",
+            "description": "Sistema interno para registrar e gerenciar informações de nomes",
+            "auth": {
+                "type": "BEARER",
+                "token": "env:NAMES_TOKEN"
+            },
+            "api_url": "",
+            "schema": {
+                "fields": [
+                    "ID_Registro",
+                    "Nome_Completo",
+                    "Primeiro_Nome",
+                    "Sobrenome",
+                    "Genero_Associado",
+                    "Data_Criacao"
+                ]
+            }
+        },
+        {
+            "id": "json-placeholder-v1",
+            "name": "Public Users API",
+            "type": "SOURCE",
+            "description": "Fake Online REST API for Testing",
+            "auth": {
+                "type": "NONE"
+            },
+            "api_url": "https://jsonplaceholder.typicode.com/users/{id}",
+            "schema": {
+                "fields": [
+                    "id",
+                    "name",
+                    "username",
+                    "email",
+                    "website"
+                ]
+            }
+        },
+        {
+            "id": "httpbin-echo-v1",
+            "name": "Public Echo API",
+            "type": "TARGET",
+            "description": "Echoes back what is sent to it",
+            "auth": {
+                "type": "NONE"
+            },
+            "api_url": "https://free.mockerapi.com/post",
+            "schema": {
+                "fields": [
+                    "submitted_name",
+                    "submitted_email",
+                    "origin_app"
+                ]
+            }
+        }
+    ]
+}
