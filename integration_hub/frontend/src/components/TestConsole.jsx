@@ -56,6 +56,8 @@ const TestConsole = () => {
             try {
                 console.log("Raw Input JSON:", inputJson); // DEBUG
                 parsedInput = JSON.parse(inputJson);
+                // Force is_test flag
+                parsedInput.is_test = true;
             } catch (e) {
                 console.error("JSON Parse Error:", e);
                 throw new Error("Invalid JSON format");

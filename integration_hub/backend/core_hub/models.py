@@ -56,6 +56,7 @@ class ExecutionLog(models.Model):
     input_data = models.JSONField(blank=True, null=True)
     output_data = models.JSONField(blank=True, null=True)
     error_message = models.TextField(blank=True, null=True)
+    is_test = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-timestamp']

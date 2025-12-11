@@ -29,39 +29,42 @@ class MappingTemplateViewSet(viewsets.ModelViewSet):
         Mode 2 (Active): Input: { "params": { "cnpj": "..." } } -> Fetch Source -> Mapping -> Output
         """
         template = self.get_object()
-        input_data = request.data.get('data')
-        
-        # Valid JSON check (drf parses it, but let's check structure)
-        if request.data and not isinstance(request.data, dict):
-             return Response({"error": "Malformed JSON payload"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # WEBOOK SUPPORT: If Source has no API URL (Passive), and no 'data' wrapper is found,
-        # treat the entire body as the input payload.
-        if not input_data and not template.source.api_url:
-            input_data = request.data
-            
-        # If still no input_data and we HAVE an API URL, we need to fetch.
-        if not input_data:
-            if not template.source.api_url:
-                # This case is now covered above (input_data = request.data), unless body is empty.
-                return Response({"error": "No input payload provided for Passive Source"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Use 'params' from request for URL substitution if any
-            fetch_params = request.data.get('params', {})
-            try:
-                # Active Fetch
-                input_data = DataFetcher.fetch_data(template.source, fetch_params)
-            except Exception as e:
-                 return Response({"error": f"Fetch Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        # Get active version rules
-        if not template.active_version:
-             return Response({"error": "No active version found for this template"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        rules = template.active_version.rules
-        output_data = {}
+        input_data = None
+        is_test = request.data.get('is_test', False)
         
         try:
+            input_data = request.data.get('data')
+            
+            # Valid JSON check (drf parses it, but let's check structure)
+            if request.data and not isinstance(request.data, dict):
+                 raise ValueError("Malformed JSON payload")
+            
+            # WEBOOK SUPPORT: If Source has no API URL (Passive), and no 'data' wrapper is found,
+            # treat the entire body as the input payload.
+            if not input_data and not template.source.api_url:
+                input_data = request.data
+                
+            # If still no input_data and we HAVE an API URL, we need to fetch.
+            if not input_data:
+                if not template.source.api_url:
+                    # If request.data is empty and no api_url, that's an error
+                    raise ValueError("No input payload provided for Passive Source")
+                
+                # Use 'params' from request for URL substitution if any
+                fetch_params = request.data.get('params', {})
+                try:
+                    # Active Fetch
+                    input_data = DataFetcher.fetch_data(template.source, fetch_params)
+                except Exception as e:
+                     raise ValueError(f"Fetch Error: {str(e)}")
+    
+            # Get active version rules
+            if not template.active_version:
+                 raise ValueError("No active version found for this template")
+            
+            rules = template.active_version.rules
+            output_data = {}
+            
             # Simple execution engine logic
             # Rule format: { "source_path": "$.company.tax_id", "target_field": "tax_id", "transform": "REMOVE_PUNCTUATION" }
             
@@ -110,7 +113,8 @@ class MappingTemplateViewSet(viewsets.ModelViewSet):
                 version=template.active_version,
                 status='SUCCESS',
                 input_data=input_data,
-                output_data=output_data
+                output_data=output_data,
+                is_test=is_test
             )
 
             return Response({
@@ -120,14 +124,23 @@ class MappingTemplateViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             error_msg = str(e)
-            ExecutionLog.objects.create(
-                template=template,
-                version=template.active_version,
-                status='ERROR',
-                input_data=input_data,
-                error_message=error_msg
-            )
-            return Response({"error": error_msg}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Execution failed: {error_msg}", exc_info=True)
+            # Safe Logging
+            try:
+                ExecutionLog.objects.create(
+                    template=template,
+                    version=template.active_version,
+                    status='ERROR',
+                    input_data=input_data, # Might be None if failed early
+                    error_message=error_msg,
+                    is_test=is_test
+                )
+            except Exception as log_error:
+                logger.error(f"Failed to save error log: {log_error}", exc_info=True)
+                
+            # If it's a ValueError we initiated, treat as 400, else 500
+            status_code = status.HTTP_400_BAD_REQUEST if isinstance(e, ValueError) else status.HTTP_500_INTERNAL_SERVER_ERROR
+            return Response({"error": error_msg}, status=status_code)
 
 class MappingVersionViewSet(viewsets.ModelViewSet):
     queryset = MappingVersion.objects.all()

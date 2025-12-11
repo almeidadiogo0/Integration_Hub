@@ -75,7 +75,14 @@ const Dashboard = () => {
                             <div className="flex items-center gap-3">
                                 {log.status === 'SUCCESS' ? <CheckCircle size={18} className="text-green-500" /> : <XCircle size={18} className="text-red-500" />}
                                 <div>
-                                    <div className="font-medium text-slate-700">{log.template_name || 'Unknown Template'}</div>
+                                    <div className="font-medium text-slate-700">
+                                        {log.template_name || 'Unknown Template'}
+                                        {log.is_test && (
+                                            <span className="ml-2 text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
+                                                TEST
+                                            </span>
+                                        )}
+                                    </div>
                                     <div className="text-xs text-slate-500">{new Date(log.timestamp).toLocaleString()}</div>
                                 </div>
                             </div>
