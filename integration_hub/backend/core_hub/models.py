@@ -28,7 +28,8 @@ class MappingTemplate(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('source', 'target')
+        # unique_together = ('source', 'target') removed as requested
+        pass
 
     def __str__(self):
         return self.name
