@@ -96,7 +96,18 @@ const MappingWizard = () => {
             navigate('/mappings');
         } catch (error) {
             console.error(error);
-            alert('Error saving template: ' + error.message);
+            let msg = error.message;
+            if (error.response?.data) {
+                // Check for non_field_errors (unique together usually comes here)
+                if (error.response.data.non_field_errors) {
+                    msg = error.response.data.non_field_errors[0];
+                } else if (error.response.data.detail) {
+                    msg = error.response.data.detail;
+                } else {
+                    msg = JSON.stringify(error.response.data);
+                }
+            }
+            alert('Error saving template: ' + msg);
         } finally {
             setLoading(false);
         }
