@@ -21,7 +21,8 @@
                     "data.logradouro",
                     "data.municipio",
                     "data.uf",
-                    "data.cep"
+                    "data.cep",
+                    "data.numero"
                 ]
             }
         },
@@ -45,8 +46,7 @@
                     "Number",
                     "Zip/Postal Code",
                     "State/Province",
-                    "City",
-                    "Country"
+                    "City"
                 ]
             }
         },

@@ -20,7 +20,7 @@ const Layout = () => {
                     <NavLink to="/logs" icon={<Activity size={20} />} label="Execution Logs" />
                 </nav>
                 <div className="p-4 border-t border-slate-800 text-xs text-slate-500">
-                    v1.0.0 Manual Mode
+                    v2.0.1
                 </div>
             </aside>
 

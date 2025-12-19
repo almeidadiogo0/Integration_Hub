@@ -17,6 +17,10 @@ export const IntegrationService = {
     createVersion: (data) => api.post('versions/', data),
     executeTemplate: (id, inputData) => api.post(`templates/${id}/execute/`, { data: inputData }),
     getLogs: () => api.get('logs/'),
+    // AI Auto-Mapping
+    autoMap: (formData) => api.post('ai/auto-map/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
 };
 
 export default api;
