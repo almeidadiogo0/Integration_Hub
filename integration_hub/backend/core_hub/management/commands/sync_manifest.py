@@ -7,10 +7,11 @@ class Command(BaseCommand):
     help = 'Syncs Integration Profiles from manifest.json'
 
     def handle(self, *args, **options):
-        manifest_path = os.path.join(os.getcwd(), 'manifest.json')
+        from django.conf import settings
+        manifest_path = os.path.join(settings.BASE_DIR, 'manifest.json')
         
         if not os.path.exists(manifest_path):
-            self.stdout.write(self.style.ERROR('manifest.json not found in backend root'))
+            self.stdout.write(self.style.ERROR(f'manifest.json not found at {manifest_path}'))
             return
 
         with open(manifest_path, 'r', encoding='utf-8') as f:

@@ -12,3 +12,6 @@ python manage.py collectstatic --no-input
 
 # Run migrations
 python manage.py migrate
+
+# Sync manifest data
+python manage.py sync_manifest
