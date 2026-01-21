@@ -33,7 +33,7 @@ def get_gemini_model():
     
     import google.generativeai as genai
     genai.configure(api_key=GEMINI_API_KEY)
-    return genai.GenerativeModel('gemini-2.5-flash-lite')
+    return genai.GenerativeModel('gemini-2.5-flash')
 
 
 @api_view(['POST'])
