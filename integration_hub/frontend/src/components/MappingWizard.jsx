@@ -22,10 +22,7 @@ const MappingWizard = () => {
         active_version_number: 0 // Store current max version
     });
 
-    const [mappingRules, setMappingRules] = useState([
-        { id: 1, source_path: '$.data.cnpj', target_field: 'cnpj', transform: 'REMOVE_PUNCTUATION' }
-    ]);
-
+    const [mappingRules, setMappingRules] = useState([]);
     const [profiles, setProfiles] = useState([]);
 
     useEffect(() => {
