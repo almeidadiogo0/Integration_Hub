@@ -107,6 +107,9 @@ async def execute_template_async(request, pk=None):
             transformed_value = TransformationEngine.apply(raw_value, transform)
             output_data[target_field] = transformed_value
 
+        # Add template ID to the output data
+        output_data['template_id'] = template.id
+
         # Send to Target ASYNC
         target_response = None
         if template.target:
