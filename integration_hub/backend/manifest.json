@@ -35,7 +35,7 @@
                 "type": "BEARER",
                 "token": "env:CRM_TOKEN"
             },
-            "api_url": "https://webhook.site/bf6f379b-7793-43be-88fe-4fb47643448f",
+            "api_url": "https://webhook.site/19017b18-f088-47d3-b0bf-eb7fb60a2205",
             "schema": {
                 "fields": [
                     "Id",
